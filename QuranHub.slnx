@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="QuranHub.BLL/QuranHub.BLL.csproj" />
+  <Project Path="QuranHub.Core/QuranHub.Core.csproj" />
+  <Project Path="QuranHub.DAL/QuranHub.DAL.csproj" />
+  <Project Path="QuranHub.Domain/QuranHub.Domain.csproj" />
+  <Project Path="QuranHub.Web/QuranHub.Web.csproj" />
+</Solution>
