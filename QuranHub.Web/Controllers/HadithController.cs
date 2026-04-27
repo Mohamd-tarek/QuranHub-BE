@@ -30,6 +30,7 @@ public class HadithController : ControllerBase
     }
 
     [HttpGet(Router.Hadith.GetAll)]
+    [ResponseCache(Duration = 24 * 60 * 60, Location = ResponseCacheLocation.Any)]
     public async Task<ActionResult<List<Section>>> GetAllHadith() 
     {
         try

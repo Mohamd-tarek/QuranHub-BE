@@ -3,6 +3,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// Response caching service (enables server-side response caching middleware)
+builder.Services.AddResponseCaching();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen();
@@ -62,6 +64,10 @@ app.UseStaticFiles();
 app.UseSession();
 
 app.UseRouting();
+
+// Enable response caching middleware. Place before authorization so cached
+// responses can be served without re-running authorization for anonymous GETs.
+app.UseResponseCaching();
 
 app.UseMiddleware<DebugMiddleWare>();
 

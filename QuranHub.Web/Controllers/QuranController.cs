@@ -16,7 +16,7 @@ public class QuranController : ControllerBase
         UserManager<QuranHubUser> userManager,
         IHttpContextAccessor httpContextAccessor)
     {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger)); 
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _quranRepository = quranRepository ?? throw new ArgumentNullException(nameof(quranRepository));
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _httpContext = httpContextAccessor.HttpContext ?? throw new ArgumentNullException(nameof(httpContextAccessor));
@@ -30,10 +30,12 @@ public class QuranController : ControllerBase
     }
 
     [HttpGet(Router.Quran.QuranInfo)]
-    public ActionResult<IEnumerable<object>> GetQuranInfo(string type) 
+    [ResponseCache(Duration = 24 * 60 * 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] {"type"} )]
+    public ActionResult<IEnumerable<object>> GetQuranInfo(string type)
     {
         try
         {
+            _logger.Information("Getting Quran info with type: {type}", type);
             return Ok(_quranRepository.GetQuranInfo(type));
         }
         catch (Exception ex)
@@ -44,7 +46,8 @@ public class QuranController : ControllerBase
     }
 
     [HttpGet(Router.Quran.MindMap)]
-    public async Task<ActionResult<byte[]>> GetMindMap(long id) 
+    [ResponseCache(Duration = 24 * 60 * 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "id" })]
+    public async Task<ActionResult<byte[]>> GetMindMap(long id)
     {
         try
         {
@@ -74,11 +77,11 @@ public class QuranController : ControllerBase
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost(Router.Quran.CreateNote)]
-    public async  Task<ActionResult> CreateNote([FromBody] AddNoteRequestModel note)
+    public async Task<ActionResult> CreateNote([FromBody] AddNoteRequestModel note)
     {
         try
         {
-            if ( await _quranRepository.AddNote(note.NoteId, note.Index, note.Sura, note.Aya, note.Text, _currentUser))
+            if (await _quranRepository.AddNote(note.NoteId, note.Index, note.Sura, note.Aya, note.Text, _currentUser))
             {
                 return Ok();
             }
@@ -104,11 +107,11 @@ public class QuranController : ControllerBase
 
             var groupsResponseModelList = new List<GroupsResponseModel>();
 
-            foreach(var group in result)
+            foreach (var group in result)
             {
                 List<VerseResponseModel> verseResponseModels = new List<VerseResponseModel>();
 
-                foreach(var verse in group.Verses)
+                foreach (var verse in group.Verses)
                 {
                     verseResponseModels.Add(new VerseResponseModel()
                     {
@@ -130,8 +133,8 @@ public class QuranController : ControllerBase
                 groupsResponseModelList.Add(groupResponseMode);
             }
 
-              return Ok(groupsResponseModelList);
-            
+            return Ok(groupsResponseModelList);
+
 
 
         }
@@ -148,7 +151,7 @@ public class QuranController : ControllerBase
     {
         try
         {
-            if (await  _quranRepository.AddGroup(group.name, group.versesId, _currentUser))
+            if (await _quranRepository.AddGroup(group.name, group.versesId, _currentUser))
             {
                 return Ok();
             }
